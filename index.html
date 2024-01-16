@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Significado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        #search-input {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buscador de Significado</h1>
+    <button onclick="randomWord()">Palabra al Azar</button>
+    <div id="result"></div>
+    <div id="error"></div>
+    <div class="options" id="options"></div>
+    <script>
+        let dictionary;
+
+// Cargar el diccionario desde el archivo JSON
+fetch('https://raw.githubusercontent.com/ManuMoMe/MoMeVocabulary/main/vocabulary.json')
+    .then(response => response.json())
+    .then(data => {
+        dictionary = data;
+    })
+    .catch(error => console.error('Error al cargar el diccionario:', error));
+
+function randomWord() {
+    const words = Object.keys(dictionary[0]);
+    if (words.length === 0) {
+        document.getElementById('result').innerHTML = '';
+        document.getElementById('error').innerHTML = 'El diccionario está vacío.';
+        return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * words.length);
+    const randomWord = words[randomIndex];
+    const randomMeaning = dictionary[0][randomWord];
+
+    const options = generateOptions(randomWord);
+    displayOptions(options);
+    document.getElementById('result').innerHTML =  randomWord;
+    document.getElementById('error').innerHTML = '';
+}
+
+function generateOptions(correctWord) {
+    const options = [correctWord];
+    while (options.length < 3) {
+        const randomWord = getRandomWord();
+        if (!options.includes(randomWord)) {
+            options.push(randomWord);
+        }
+    }
+    return shuffleArray(options);
+}
+
+function getRandomWord() {
+    const words = Object.keys(dictionary[0]);
+    const randomIndex = Math.floor(Math.random() * words.length);
+    return words[randomIndex];
+}
+
+function shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function displayOptions(options) {
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+
+    options.forEach(option => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('option');
+        optionElement.innerText = dictionary[0][option];
+        optionElement.onclick = () => checkAnswer(option);
+        optionsContainer.appendChild(optionElement);
+    });
+}
+
+function checkAnswer(selectedWord) {
+    console.info( document.getElementById('result').innerHTML)
+    const correctWord = document.getElementById('result').innerHTML;
+    if (selectedWord === correctWord) {
+        document.getElementById('error').innerHTML = 'Correcto!';
+    } else {
+        document.getElementById('error').innerHTML = 'Error!';
+    }
+}
+
+
+    </script>
+</body>
+</html>
