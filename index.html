@@ -65,20 +65,25 @@ function randomWord() {
         document.getElementById('error').innerHTML = 'El diccionario está vacío.';
         return;
     }
-
+    // Obtenemos un valor aleatorio dentro del rango de números dispònibles
     const randomIndex = Math.floor(Math.random() * words.length);
+    // Buscamos la palabra aleatoria
     const randomWord = words[randomIndex];
+    // Sacamos su significado
     const randomMeaning = dictionary[0][randomWord];
-
-    const options = generateOptions(randomWord);    
+    // Obtenemos dos significados incorrectos.
+    const options = generateWrongOptions(randomWord,2);
+    // Escribimos la palabra    
     document.getElementById('result').innerHTML =  randomWord;
+    // Escribimos las opciones.
     displayOptions(options);
+    // Borramos el si hay o no resultado.
     document.getElementById('error').innerHTML = '';
 }
 
-function generateOptions(correctWord) {
+function generateWrongOptions(correctWord,numberOptions) {
     const options = [correctWord];
-    while (options.length < 3) {
+    while (options.length <= numberOptions) {
         const randomWord = getRandomWord();
         if (!options.includes(randomWord)) {
             options.push(randomWord);
